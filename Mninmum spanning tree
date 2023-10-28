@@ -1,0 +1,52 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define pr pair<int,int>
+#define fi first
+#define se second
+int parent(vector<int> &par, int node){
+    if(par[node]==node){
+        return node;
+    }
+    return par[node]=parent(par,par[node]);
+}
+int unin(int u,int v,vector<int> &par,vector<int> &rank,int weight,int cost){
+    if(par[u]!=par[v]){
+        cost+=weight;
+    }
+    u=parent(par,u);
+    v=parent(par,v);
+    if(rank[u]>rank[v]){
+        par[v]=par[u];
+    }else if(rank[v]>rank[u]){
+        par[u]=par[v];
+    }else{
+        par[v]=par[u];
+        rank[u]++;
+    }
+    return cost;
+}
+int main(){
+    int n,e;
+    cin>>n>>e;
+    vector<int> par(n);
+    vector<int> rank(n);
+    for(int i=0;i<n;i++){
+        par[i]=i;
+    }
+    vector<pr> weight(e);
+    vector<pr> uni(e);
+    for(int i=0;i<e;i++){
+        int w,v1,v2;
+        cin>>w>>v1>>v2;
+        weight[i].fi=w;
+        weight[i].se=i;
+        uni[i].fi=v1;
+        uni[i].se=v2;
+    } 
+    sort(weight.begin(),weight.end());
+    int cost=0;
+    for(int i=0;i<e;i++){
+        cost=unin(uni[weight[i].se].fi,uni[weight[i].se].se,par,rank,weight[i].fi,cost);
+    }
+    cout<<cost;
+}
